@@ -29,11 +29,43 @@ public class ConsistentHashUtilTest {
         service.clear();
     }
 
+
+    public static void main(String[] args) {
+        before();
+        // 注册服务，划分服务范围
+        testRegister();
+        after();
+        /**
+         *
+         * 【全部范围】0, 128,255,256,384, 511, 512,640,767,768,1023
+         * 【服务1】  0, --,--,--,--, --, --,--,--,--,1023
+         * 【服务2】  0, --,--,--,--, --, 512,--,--,--,1023
+         * 0, --,--,256,--, 511, --,--,--,--,--
+         * 0, 128,255,256,384, 511, 512,640,767,768,1023
+         * 0, 128,255,256,384, 511, 512,640,767,768,1023
+         * 0, 128,255,256,384, 511, 512,640,767,768,1023
+         * ----------------------------------------
+         * 新服务1接手旧服务null范围[from = 0, to = 1023]
+         * ----------------------------------------
+         * 新服务2接手旧服务1范围[from = 512, to = 1023]
+         * ----------------------------------------
+         * 新服务3接手旧服务1范围[from = 256, to = 511]
+         * ----------------------------------------
+         * 新服务4接手旧服务2范围[from = 768, to = 1023]
+         * ----------------------------------------
+         * 新服务5接手旧服务1范围[from = 128, to = 255]
+         * ----------------------------------------
+         * 新服务6接手旧服务3范围[from = 384, to = 511]
+         * ----------------------------------------
+         * 新服务7接手旧服务2范围[from = 640, to = 767]
+         * ----------------------------------------
+         */
+    }
     /**
      * 测试服务的注册
      */
     @Test
-    public void testRegister() {
+    public static void testRegister() {
         tab();
 
         service.registerServer("1");
@@ -63,7 +95,7 @@ public class ConsistentHashUtilTest {
      * 测试服务的注销
      */
     @Test
-    public void testServerRmv() {
+    public void testDeleteServer() {
         // 先注册进去一些服务
         testRegister();
 
@@ -105,7 +137,7 @@ public class ConsistentHashUtilTest {
      * 这里用于数据的id查询位于哪个服务
      */
     @Test
-    public void test3(){
+    public void testSearchServiceIndex(){
         // 先注册进去一些服务
         testRegister();
 
@@ -134,7 +166,7 @@ public class ConsistentHashUtilTest {
      * 测试服务的范围查询
      */
     @Test
-    public void test4(){
+    public void testServiceRange(){
         // 先注册进去一些服务
         testRegister();
 
@@ -197,7 +229,7 @@ public class ConsistentHashUtilTest {
      * 测试服务的注册
      */
     @Test
-    public void test7() {
+    public void testRegisterServer() {
         tab();
         service.registerServer("3");
         service.registerServer("2");
